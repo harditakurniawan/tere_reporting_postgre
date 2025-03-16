@@ -1,6 +1,7 @@
 # Reporting Fact Detail (PostgreSQL)
 
-## Structure Folder
+### Structure Folder
+```
 root/
 ├── config/
 │   └── app_config.py
@@ -16,8 +17,9 @@ root/
 │   └── utils.py
 ├── main.py
 └── .env
+```
 
-## How to run:
+### How to run:
 * Adjust env
 * Install depedency
 * Create db and its tables (see schema in model.txt)
