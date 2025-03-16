@@ -1,0 +1,149 @@
+# ==================================
+# REF MODEL MONGO 
+# ==================================
+coll trx_master :
+    _id
+    transaction_date
+    status
+    origin
+    keyword
+    msisdn
+    poin
+    created_by
+
+coll trx_master_detail :
+    _id
+    payload.redeem.master_id
+    payload.program.name
+    payload.program.program_owner
+    payload.program.program_owner_detail
+    payload.keyword.eligibility.program_experience
+    payload.keyword.eligibility.poin_value
+    payload.keyword.eligibility.poin_redeemed
+    payload.keyword.eligibility.customer_value
+    payload.keyword.eligibility.start_period
+    payload.keyword.eligibility.end_period
+    payload.keyword.eligibility.merchant
+    payload.keyword.eligibility.program_bersubsidi
+    payload.incoming.channel_id
+    payload.incoming.total_redeem
+    payload.customer.brand
+    payload.customer.region
+    payload.customer.city
+    payload.customer.loyalty_tier.name
+    payload.payload.voucher.core.voucher_code
+
+coll accounts :
+    _id
+    user_name
+
+coll lovs :
+    _id
+    set_value
+
+coll locations :
+    _id
+    name
+
+coll locationprefixes :
+    _id
+    prefix
+    area
+
+coll merchantv2 :
+    _id
+    merchant_name
+
+
+
+# ==================================
+# REF MODEL POSTGRES
+# ==================================
+-- Table Definition
+CREATE TABLE "mongo"."accounts" (
+    "_id" varchar(255) NOT NULL,
+    "user_name" varchar(255)
+);
+
+CREATE TABLE "mongo"."locationprefixes" (
+    "_id" varchar(255) NOT NULL,
+    "area" varchar(255),
+    "prefix" varchar(255),
+    PRIMARY KEY ("_id")
+);
+
+CREATE TABLE "mongo"."locations" (
+    "_id" varchar(255) NOT NULL,
+    "name" varchar(255),
+    PRIMARY KEY ("_id")
+);
+
+CREATE TABLE "mongo"."lovs" (
+    "_id" varchar(255) NOT NULL,
+    "set_value" varchar(255),
+    PRIMARY KEY ("_id")
+);
+
+CREATE TABLE "mongo"."merchantv2" (
+    "_id" varchar(255) NOT NULL,
+    "merchant_name" varchar(255),
+    PRIMARY KEY ("_id")
+);
+
+CREATE TABLE "mongo"."transaction_master" (
+    "_id" varchar(255) NOT NULL,
+    "transaction_id" varchar(255) NOT NULL,
+    "channel_id" varchar(255),
+    "created_at" timestamptz DEFAULT now(),
+    "keyword" varchar(255),
+    "msisdn" varchar(255),
+    "origin" varchar(255),
+    "program_name" varchar(255),
+    "status" varchar(255),
+    "transaction_date" timestamptz,
+    "poin" int4 DEFAULT 0,
+    "bonus_type" varchar(255),
+    "created_by" varchar(255) DEFAULT '667d1b956199ab98c0b0b341'::character varying,
+    PRIMARY KEY ("_id")
+);
+
+CREATE TABLE "mongo"."transaction_master_detail" (
+    "_id" varchar(255) NOT NULL,
+    "master_id" varchar(255) NOT NULL,
+    "transaction_status" varchar(255),
+    "msisdn" varchar(255),
+    "keyword" varchar(255),
+    "transaction_date" timestamptz,
+    "bonus_type" varchar(255),
+    "channel_id" varchar(255),
+    "amount" int4 DEFAULT 0,
+    "remark" text,
+    "area" varchar(255),
+    "region" varchar(255),
+    "city" varchar(255),
+    "program_name" varchar(255) DEFAULT 'Default Program Name'::character varying,
+    "program_owner" varchar(255) DEFAULT '62ffc0fc8a01008799e785bc'::character varying,
+    "program_owner_detail" varchar(255) DEFAULT '62ffd9ed1e38fbdeb16f1f53'::character varying,
+    "program_experience" varchar(255) DEFAULT '6300f9f56c248f55eead2070'::character varying,
+    "poin_value" varchar(255) DEFAULT 'Fixed'::character varying,
+    "poin_redeemed" int4 NOT NULL DEFAULT 1,
+    "customer_value" int4 NOT NULL DEFAULT 0,
+    "start_period" timestamptz DEFAULT now(),
+    "end_period" timestamptz DEFAULT now(),
+    "merchant" varchar DEFAULT '64f8183267462ed0a6e76f88'::character varying,
+    "program_bersubsidi" bool NOT NULL DEFAULT false,
+    "total_redeem" int4 NOT NULL DEFAULT 1,
+    "brand" varchar DEFAULT 'Default Brand'::character varying,
+    "tier_name" varchar DEFAULT 'Silver'::character varying,
+    "voucher_code" varchar DEFAULT 'VOUCHER_1234567890'::character varying,
+    PRIMARY KEY ("_id")
+);
+
+-- Indexes
+CREATE INDEX prefix_index ON mongo.locationprefixes USING btree (prefix);
+CREATE INDEX transaction_id_index ON mongo.transaction_master USING btree (transaction_id);
+CREATE INDEX fact_detail_index ON mongo.transaction_master USING btree (transaction_date, status, origin);
+CREATE INDEX transaction_date_index ON mongo.transaction_master USING btree (transaction_date);
+CREATE INDEX keyword_index ON mongo.transaction_master USING btree (keyword);
+CREATE INDEX msisdn_index ON mongo.transaction_master USING btree (msisdn);
+CREATE INDEX masted_id_index ON mongo.transaction_master_detail USING btree (master_id);
