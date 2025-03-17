@@ -1,13 +1,27 @@
-import logging
+from datetime import datetime
 
 class Logger:
     @staticmethod
-    def get_logger(name="AppLogger"):
-        logger = logging.getLogger(name)
-        if not logger.handlers:
-            handler = logging.StreamHandler()
-            formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s \n')
-            handler.setFormatter(formatter)
-            logger.addHandler(handler)
-            logger.setLevel(logging.DEBUG)
-        return logger
+    def log(level, message):
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+        print(f"{now} - {level.upper()} - {message}\n")
+
+    @staticmethod
+    def debug(message):
+        Logger.log('DEBUG', message)
+
+    @staticmethod
+    def info(message):
+        Logger.log('INFO', message)
+
+    @staticmethod
+    def warning(message):
+        Logger.log('WARNING', message)
+
+    @staticmethod
+    def error(message):
+        Logger.log('ERROR', message)
+
+    @staticmethod
+    def critical(message):
+        Logger.log('CRITICAL', message)

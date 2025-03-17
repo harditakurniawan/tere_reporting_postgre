@@ -25,7 +25,7 @@ def main():
         connection = db.get_connection()
 
         # Initialization
-        logger = Logger().get_logger()
+        logger = Logger()
         utils = Utils()
         datetime_utils = DatetimeUtils(logger=logger)
         fact_detail_service = FactDetailService(logger=logger, connection=connection)

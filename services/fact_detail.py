@@ -1,4 +1,3 @@
-from config.app_config import AppConfig
 import pandas as pd
 
 class FactDetailService:

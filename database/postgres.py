@@ -1,5 +1,5 @@
 import psycopg2
-from psycopg2 import sql, OperationalError
+from psycopg2 import OperationalError
 from utils.logger import Logger
 
 class PostgresDB:
@@ -9,7 +9,7 @@ class PostgresDB:
         self.password = password
         self.host = host
         self.port = port
-        self.logger = Logger.get_logger("PostgresDB")
+        self.logger = Logger()
 
     def get_connection(self):
         try:
