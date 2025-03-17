@@ -1,26 +1,20 @@
-# app_config.py
+import configparser
 import os
-from dotenv import load_dotenv
 
 class AppConfig:
-    _instance = None
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(AppConfig, cls).__new__(cls)
-            cls._instance.load_config()
-        return cls._instance
+    def __init__(self, env_file='.env'):
+        self.env_file = env_file
+        self.config = configparser.ConfigParser()
+        self.load_config()
 
     def load_config(self):
-        load_dotenv()  
-        self.BATCH_SIZE = int(os.getenv('BATCH_SIZE', 10000))
-        self.DEFAULT_PERIOD = int(os.getenv('DEFAULT_PERIOD', 3))
-        self.TARGET_DIR = os.getenv('TARGET_DIR', './report')
-        self.DB_HOST = os.getenv('DB_HOST', '127.0.0.1')
-        self.DB_PORT = os.getenv('DB_PORT', '5432')
-        self.DB_NAME = os.getenv('DB_NAME', 'slreport_db')
-        self.DB_USERNAME = os.getenv('DB_USERNAME', '')
-        self.DB_PASSWPRD = os.getenv('DB_PASSWPRD', '')
-
-    def reload_config(self):
-        self.load_config()
+        self.config.read(self.env_file)
+        
+        self.BATCH_SIZE = int(self.config.get('APP', 'BATCH_SIZE', fallback=10000))
+        self.DEFAULT_PERIOD = int(self.config.get('APP', 'DEFAULT_PERIOD', fallback=3))
+        self.TARGET_DIR = self.config.get('APP', 'TARGET_DIR', fallback='./report')
+        self.DB_HOST = self.config.get('DB', 'DB_HOST', fallback='127.0.0.1')
+        self.DB_PORT = self.config.get('DB', 'DB_PORT', fallback='5432')
+        self.DB_NAME = self.config.get('DB', 'DB_NAME', fallback='slreport_db')
+        self.DB_USERNAME = self.config.get('DB', 'DB_USERNAME', fallback='')
+        self.DB_PASSWORD = self.config.get('DB', 'DB_PASSWORD', fallback='')

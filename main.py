@@ -14,7 +14,6 @@ import os
 def main():
     try:
         config = AppConfig()
-        config.reload_config()
 
         # Input from cli
         parse_date = str(input("Target date (required | format: YYYY-MM-DD) : ")).strip()
@@ -22,7 +21,7 @@ def main():
         exclude_input = str(input("Exclude keyword (optional | seperater with coma if more than one): ")).strip()
 
         # DB Connection
-        db = PostgresDB(dbname=config.DB_NAME, user=config.DB_USERNAME, password=config.DB_PASSWPRD, host=config.DB_HOST, port=config.DB_PORT)
+        db = PostgresDB(dbname=config.DB_NAME, user=config.DB_USERNAME, password=config.DB_PASSWORD, host=config.DB_HOST, port=config.DB_PORT)
         connection = db.get_connection()
 
         # Initialization
