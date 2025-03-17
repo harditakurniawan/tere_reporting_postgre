@@ -6,8 +6,8 @@ class FactDetailService:
         self.logger = logger
         self.connection = connection
         
-    def getRecords(self, start_date: str, end_date: str, batch_size: int):
-        rawQuery = """
+    def getRecords(self, start_date: str, end_date: str, exclude_keywords: list[str], batch_size: int):
+        raw_query = """
             SELECT
                 trx_master.transaction_id,
                 trx_master.transaction_date,
@@ -52,6 +52,16 @@ class FactDetailService:
                 AND transaction_date < %s
                 AND status = 'Success'
                 AND origin ~ '^redeem'
+        """
+
+        params = [start_date, end_date]
+
+        if exclude_keywords:
+            placeholders = ', '.join(['%s'] * len(exclude_keywords))
+            raw_query += f" AND keyword NOT IN ({placeholders})"
+            params.extend(exclude_keywords)
+
+        raw_query += """
             ) AS trx_master
             LEFT JOIN mongo.transaction_master_detail tmd ON tmd.master_id = trx_master.transaction_id
             LEFT JOIN mongo.accounts acc ON trx_master.created_by = acc._id
@@ -60,12 +70,11 @@ class FactDetailService:
             LEFT JOIN mongo.merchantv2 merchant ON tmd.merchant = merchant._id
             LEFT JOIN mongo.locations loc ON tmd.program_owner_detail = loc._id
             LEFT JOIN mongo.locationprefixes loc_prefix ON SUBSTRING(trx_master.msisdn FROM 3 FOR 6) = loc_prefix.prefix;
-        """;
-        
-        params = (start_date, end_date)
+        """
+
         cursor = self.connection.cursor(name='fact_detail_cursor')
         cursor.itersize = batch_size
-        cursor.execute(rawQuery, params)
+        cursor.execute(raw_query, params)
         
 
         while True:

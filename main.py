@@ -17,10 +17,9 @@ def main():
         config.reload_config()
 
         # Input from cli
-        print("Target date : ", end = "")
-        parse_date = str(input())
-        print("File name: ", end = "")
-        filename = str(input())
+        parse_date = str(input("Target date (required | format: YYYY-MM-DD) : ")).strip()
+        filename = str(input("File name (required | ex: filename.dat) : ")).strip()
+        exclude_input = str(input("Exclude keyword (optional | seperater with coma if more than one): ")).strip()
 
         # DB Connection
         db = PostgresDB(dbname=config.DB_NAME, user=config.DB_USERNAME, password=config.DB_PASSWPRD, host=config.DB_HOST, port=config.DB_PORT)
@@ -33,6 +32,7 @@ def main():
         fact_detail_service = FactDetailService(logger=logger, connection=connection)
 
         # Main task
+        exclude_keywords = [exclude.strip().upper() for exclude in exclude_input.split(',')] if exclude_input else []
         date_range = datetime_utils.generate_date_range(parse_date);
         start_date = date_range.get('start_date')
         end_date = date_range.get('end_date')
@@ -42,7 +42,7 @@ def main():
         try:
             os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, "a") as txt_file:
-                for batches in fact_detail_service.getRecords(start_date, end_date, config.BATCH_SIZE):
+                for batches in fact_detail_service.getRecords(start_date, end_date, exclude_keywords, config.BATCH_SIZE):
                     # df = pd.DataFrame.from_records(batches)
                     # mem_usage = sys.getsizeof(df)
 

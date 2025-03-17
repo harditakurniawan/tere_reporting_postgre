@@ -143,6 +143,7 @@ CREATE TABLE "mongo"."transaction_master_detail" (
 CREATE INDEX prefix_index ON mongo.locationprefixes USING btree (prefix);
 CREATE INDEX transaction_id_index ON mongo.transaction_master USING btree (transaction_id);
 CREATE INDEX fact_detail_index ON mongo.transaction_master USING btree (transaction_date, status, origin);
+CREATE INDEX fact_detail_exclude_keyword_index ON mongo.transaction_master USING btree (transaction_date, status, origin, keyword);
 CREATE INDEX transaction_date_index ON mongo.transaction_master USING btree (transaction_date);
 CREATE INDEX keyword_index ON mongo.transaction_master USING btree (keyword);
 CREATE INDEX msisdn_index ON mongo.transaction_master USING btree (msisdn);
