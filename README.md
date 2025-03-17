@@ -26,3 +26,4 @@ root/
 * Activate virtual env (optional) and run python3 main.py
 * Input target date with format YYYY-MM-DD
 * Input file name (ex: fact_detail.dat)
+* Input exclude keyword (it's optional. just enter if you don't need it)
