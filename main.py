@@ -45,7 +45,7 @@ def initialize_db_connection(dbname: str, dbuser: str, dbpassword: str, dbhost: 
         Logger("error", f"Database connection failed: {e}")
         raise Exception(e)
     
-def generate_date_range(inputDate: str) -> dict[str, datetime] :
+def generate_date_range(inputDate: str) :
     date_obj = pd.to_datetime(inputDate)
     last_day = date_obj - pd.Timedelta(days=1)
     parse_from = parser.isoparse(f'{last_day.strftime("%Y-%m-%d")}T17:00:00.000Z')
@@ -154,10 +154,10 @@ def main():
                     for line in batch_numpy:
                         execution_date = ""
                         if line[fields.index("execution_date")]:
-                            execution_date_unformatted = convert_datetime(f"{line[fields.index("execution_date")]}".replace(" ", "T").split(".")[0])
+                            execution_date_unformatted = convert_datetime(f"{line[fields.index('execution_date')]}".replace(" ", "T").split(".")[0])
                             execution_date = f"{formatted_trx_date(execution_date_unformatted)}" or ""
 
-                        allowed_IH = f"{allowed_indihome_number(line[fields.index("msisdn")])}".lower()
+                        allowed_IH = f"{allowed_indihome_number(line[fields.index('msisdn')])}".lower()
                         msisdn_formatted = format_msisdn(line[fields.index("msisdn")])
 
                         to_write = (
