@@ -18,11 +18,15 @@ def Logger(level, message):
 
 
 def allowed_msisdn(msisdn):
+    if msisdn is None:
+        return False
     prefixes = ("08", "62", "81", "82", "83", "85", "628")
     return any(msisdn.startswith(prefix) and msisdn[len(prefix):].isdigit() for prefix in prefixes)
 
 
 def allowed_indihome_number(msisdn):
+    if msisdn is None:
+        return True
     return not allowed_msisdn(msisdn)
 
 
@@ -85,6 +89,9 @@ def formatted_trx_date(dt_str):
 
 
 def format_msisdn(msisdn):
+    if msisdn is None:
+        return ""
+    msisdn = str(msisdn)
     if allowed_indihome_number(msisdn):
         return msisdn
     return "62{}".format(msisdn) if msisdn.startswith('8') else msisdn
@@ -186,8 +193,9 @@ def main():
                             execution_date_unformatted = convert_datetime(raw)
                             execution_date = formatted_trx_date(execution_date_unformatted)
 
-                        allowed_IH = str(allowed_indihome_number(line[fields.index('msisdn')])).lower()
-                        msisdn_formatted = format_msisdn(line[fields.index("msisdn")])
+                        raw_msisdn = line[fields.index('msisdn')] or ""
+                        allowed_IH = str(allowed_indihome_number(raw_msisdn)).lower()
+                        msisdn_formatted = format_msisdn(raw_msisdn)
 
                         values = [
                             safe_get_field(line, fields, 'transaction_id'),
